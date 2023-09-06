@@ -11,6 +11,10 @@ from app import app
 def home():
     return "hello"
 
+@app.get("/chat/<int:id>")
+def chat():
+    return "Answer"
+
 
 def allowed_file(filename):
     return filename.split(".")[-1] in ("png", "jpg", "jpeg")
