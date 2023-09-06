@@ -40,4 +40,3 @@ def set_picture():
         return {"message": "File uploaded successfully"}
 
     return {"error": "Invalid file"}, HTTPStatus.BAD_REQUEST
-
