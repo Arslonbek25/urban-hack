@@ -21,6 +21,7 @@ class RegisterSchema(Schema):
     contact = fields.String(required=True, validate=length(min=2, max=13))
     email = fields.Email(required=True, validate=validate.Length(max=120))
     password = fields.String(required=True, validate=validate.Length(min=5))
+    remember = fields.Boolean(required=True, truthy={True}, falsy={False})
 
     @validates("username")
     def validate_username(self, value):

@@ -54,8 +54,8 @@ def register():
     )
     db.session.add(user)
     db.session.commit()
-    return "user created"
-    # return user.dict
+    login_user(user, remember=data["remember"])
+    return user.dict
 
 
 @app.post("/login")
@@ -71,8 +71,7 @@ def login():
     user = User.query.filter_by(email=data["email"]).first()
     if user and bcrypt.check_password_hash(user.password, data["password"]):
         login_user(user, remember=data["remember"])
-        return "U in"
-        # return user.dict
+        return user.dict
     return {"error": "Wrong email or password"}, HTTPStatus.UNAUTHORIZED
 
 
