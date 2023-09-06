@@ -29,8 +29,7 @@ def save_picture(file):
 
 
 @app.post("/upload_image")
-# @login_required
-def set_picture():
+def upload_picture():
     file = request.files.get("image")
     if file and allowed_file(file.filename):
         filename = save_picture(file)
