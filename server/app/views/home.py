@@ -11,6 +11,11 @@ from app.extensions import db
 from app.models import Chat, ImageMessage, TextMessage
 
 
+@app.get("/")
+def home():
+    return "hello world"
+
+
 @app.post("/chat/<int:id>")
 def chat(id):
     user_message = request.json.get("text", "")
@@ -66,11 +71,35 @@ def save_picture(file):
     return filename
 
 
-@app.post("/upload_image")
-def upload_picture():
+@app.post("/chat/<int:id>/image")
+def upload_picture(id):
     file = request.files.get("image")
     if file and allowed_file(file.filename):
         filename = save_picture(file)
+
+        timestamp = datetime.utcnow()
+        chat = Chat.query.get(id)
+        if not chat:
+            chat = Chat(user_id=current_user.id)
+            db.session.add(chat)
+
+        new_image = ImageMessage(
+            chat_id=id, image_path=filename, sender="user", timestamp=timestamp
+        )
+        db.session.add(new_image)
+
+        bot_response = "Hello, this is a dummy response."
+        # Connect to ML prediction pipeline
+        bot_msg = TextMessage(
+            chat_id=chat.id,
+            text=bot_response,
+            sender="bot",
+            timestamp=timestamp + timedelta(seconds=1),
+        )
+        db.session.add(bot_msg)
+        db.session.commit()
+
+        return jsonify({"bot_response": bot_response, "chat_id": chat.id})
 
         # old = os.path.join(app.root_path, "static", current_user.image_file)
         # if os.path.exists(old):
@@ -78,6 +107,6 @@ def upload_picture():
 
         # current_user.image_file = filename
         # db.session.commit()
-        return {"message": "File uploaded successfully"}
+        # return {"message": "File uploaded successfully"}
 
     return {"message": "Invalid file"}, HTTPStatus.BAD_REQUEST
