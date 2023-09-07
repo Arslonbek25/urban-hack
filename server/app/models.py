@@ -39,6 +39,13 @@ class Chat(db.Model):
     text_messages = db.relationship("TextMessage", backref="chat", lazy=True)
     image_messages = db.relationship("ImageMessage", backref="chat", lazy=True)
 
+    @property
+    def dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+        }
+
 
 class TextMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -68,7 +75,9 @@ class ImageMessage(db.Model):
     def dict(self):
         return {
             "type": "image",
-            "path": url_for("static", filename=self.image_path, _external=True),
+            "path": url_for(
+                "static", filename=f"x-rays/{self.image_path}", _external=True
+            ),
             "timestamp": self.timestamp,
             "sender": self.sender,
         }

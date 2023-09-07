@@ -15,6 +15,10 @@ from app.models import Chat, ImageMessage, TextMessage
 def home():
     return "hello world"
 
+@app.get("/chats")
+def chats():
+    return [c.dict for c in current_user.chats]
+
 
 @app.post("/chat/<int:id>")
 def chat(id):
@@ -24,14 +28,15 @@ def chat(id):
     if not chat:
         chat = Chat(user_id=current_user.id)
         db.session.add(chat)
+        db.session.commit()
 
-    uesr_msg = TextMessage(
+    user = TextMessage(
         chat_id=chat.id,
         text=user_message,
         sender="user",
         timestamp=timestamp,
     )
-    db.session.add(uesr_msg)
+    db.session.add(user)
 
     bot_response = "Hello, this is a dummy response."
     bot_msg = TextMessage(
@@ -82,9 +87,10 @@ def upload_picture(id):
         if not chat:
             chat = Chat(user_id=current_user.id)
             db.session.add(chat)
+            db.session.commit()
 
         new_image = ImageMessage(
-            chat_id=id, image_path=filename, sender="user", timestamp=timestamp
+            chat_id=chat.id, image_path=filename, sender="user", timestamp=timestamp
         )
         db.session.add(new_image)
 
