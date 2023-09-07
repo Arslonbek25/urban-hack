@@ -11,11 +11,6 @@ from app.extensions import db
 from app.models import Chat, ImageMessage, TextMessage
 
 
-@app.get("/")
-def home():
-    return "hello"
-
-
 @app.post("/chat/<int:id>")
 def chat(id):
     user_message = request.json.get("text", "")
@@ -46,9 +41,9 @@ def chat(id):
     return jsonify({"bot_response": bot_response, "chat_id": chat.id})
 
 
-@app.route("/chat_history/<int:chat_id>", methods=["GET"])
-def chat_history(chat_id):
-    chat = Chat.query.filter_by(id=chat_id, user_id=current_user.id).first_or_404()
+@app.get("/chat/<int:id>")
+def chat_history(id):
+    chat = Chat.query.filter_by(id=id, user_id=current_user.id).first_or_404()
     messages = []
     for msg in chat.text_messages:
         messages.append(msg.dict)
