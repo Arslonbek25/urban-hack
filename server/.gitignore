@@ -5,6 +5,7 @@ __pycache__/
 models
 # C extensions
 *.so
+static/
 
 # Distribution / packaging
 .Python

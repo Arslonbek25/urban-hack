@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 
 from flask import jsonify, request, session
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 from app import app
 from app.extensions import db
@@ -18,19 +18,26 @@ def home():
 
 
 @app.get("/chats")
+@login_required
 def chats():
     return [c.dict for c in current_user.chats]
 
 
+@app.post("/chat/new")
+@login_required
+def create_chat():
+    chat = Chat(user_id=current_user.id)
+    db.session.add(chat)
+    db.session.commit()
+    return jsonify({"chat_id": chat.id})
+
+
 @app.post("/chat/<int:id>")
+@login_required
 def chat(id):
     user_message = request.json.get("text", "")
     timestamp = datetime.utcnow()
-    chat = Chat.query.get(id)
-    if not chat:
-        chat = Chat(user_id=current_user.id)
-        db.session.add(chat)
-        db.session.commit()
+    chat = Chat.query.get_or_404(id)
 
     user = TextMessage(
         chat_id=chat.id,
@@ -54,6 +61,7 @@ def chat(id):
 
 
 @app.get("/chat/<int:id>")
+@login_required
 def chat_history(id):
     chat = Chat.query.filter_by(id=id, user_id=current_user.id).first_or_404()
     messages = []
@@ -75,22 +83,19 @@ def save_picture(file):
     filename = random_hex + os.path.splitext(file.filename)[1]
     path = os.path.join(app.root_path, "static", "x-rays", filename)
     file.save(path)
-    return path
+    return path, filename
 
 
 @app.post("/chat/<int:id>/image")
+@login_required
 def upload_picture(id):
     file = request.files.get("image")
     if file and allowed_file(file.filename):
-        filename = save_picture(file)
-        prediction = predict(filename)
-        print("PREDICTION", prediction)
+        path, filename = save_picture(file)
+
+        prediction = predict(path)
         timestamp = datetime.utcnow()
-        chat = Chat.query.get(id)
-        if not chat:
-            chat = Chat(user_id=current_user.id)
-            db.session.add(chat)
-            db.session.commit()
+        chat = Chat.query.get_or_404(id)
 
         new_image = ImageMessage(
             chat_id=chat.id,
