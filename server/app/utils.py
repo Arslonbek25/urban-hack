@@ -10,7 +10,7 @@ def login_required(view):
         if current_user.is_authenticated:
             return view(*args, **kwargs)
         return (
-            {"error": "You must login to view this page"},
+            {"message": "You must login to view this page"},
             HTTPStatus.UNAUTHORIZED,
         )
 

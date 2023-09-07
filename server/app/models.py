@@ -1,4 +1,4 @@
-import enum
+import hashlib
 from datetime import datetime
 
 from flask import url_for
@@ -15,17 +15,62 @@ def load_user(id):
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # image_file = db.Column(db.String(20))  # remove
-    # messages = db.relationship("Message", backref="user", lazy=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+    chats = db.relationship("Chat", backref="user", lazy=True)
 
     @property
     def dict(self):
         return {
             "username": self.username,
             "email": self.email,
+        }
+
+    @property
+    def gravatar_url(self, size=100):
+        digest = hashlib.md5(self.email.lower().encode("utf-8")).hexdigest()
+        return f"https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}"
+
+
+class Chat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    text_messages = db.relationship("TextMessage", backref="chat", lazy=True)
+    image_messages = db.relationship("ImageMessage", backref="chat", lazy=True)
+
+
+class TextMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    chat_id = db.Column(db.Integer, db.ForeignKey("chat.id"), nullable=False)
+    text = db.Column(db.String(500), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    sender = db.Column(db.String(20), nullable=False)
+
+    @property
+    def dict(self):
+        return {
+            "type": "text",
+            "text": self.text,
+            "timestamp": self.timestamp,
+            "sender": self.sender,
+        }
+
+
+class ImageMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    chat_id = db.Column(db.Integer, db.ForeignKey("chat.id"), nullable=False)
+    image_path = db.Column(db.String(200), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    sender = db.Column(db.String(20), nullable=False)
+
+    @property
+    def dict(self):
+        return {
+            "type": "image",
+            "path": url_for("static", filename=self.image_path, _external=True),
+            "timestamp": self.timestamp,
+            "sender": self.sender,
         }
 
 

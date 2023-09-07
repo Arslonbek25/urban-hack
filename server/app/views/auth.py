@@ -39,7 +39,7 @@ def update_account():
 @app.post("/register")
 def register():
     if current_user.is_authenticated:
-        return {"error": "You are already logged in"}, HTTPStatus.BAD_REQUEST
+        return {"message": "You are already logged in"}, HTTPStatus.BAD_REQUEST
 
     data = request.get_json()
     if err := RegisterSchema().validate(data):
@@ -59,9 +59,8 @@ def register():
 
 @app.post("/login")
 def login():
-    print(current_user.is_authenticated)
     if current_user.is_authenticated:
-        return {"error": "You are already logged in"}, HTTPStatus.BAD_REQUEST
+        return {"message": "You are already logged in"}, HTTPStatus.BAD_REQUEST
 
     data = request.get_json()
     if err := LoginSchema().validate(data):
@@ -71,7 +70,7 @@ def login():
     if user and bcrypt.check_password_hash(user.password, data["password"]):
         login_user(user, remember=data["remember"])
         return user.dict
-    return {"error": "Wrong email or password"}, HTTPStatus.UNAUTHORIZED
+    return {"message": "Wrong email or password"}, HTTPStatus.UNAUTHORIZED
 
 
 @app.post("/logout")

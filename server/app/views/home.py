@@ -1,19 +1,62 @@
 import os
 import secrets
+from datetime import datetime, timedelta
 from http import HTTPStatus
 
-from flask import request
+from flask import jsonify, request, session
+from flask_login import current_user
 
 from app import app
+from app.extensions import db
+from app.models import Chat, ImageMessage, TextMessage
 
 
 @app.get("/")
 def home():
     return "hello"
 
-@app.get("/chat/<int:id>")
-def chat():
-    return "Answer"
+
+@app.post("/chat/<int:id>")
+def chat(id):
+    user_message = request.json.get("text", "")
+    timestamp = datetime.utcnow()
+    chat = Chat.query.get(id)
+    if not chat:
+        chat = Chat(user_id=current_user.id)
+        db.session.add(chat)
+
+    uesr_msg = TextMessage(
+        chat_id=chat.id,
+        text=user_message,
+        sender="user",
+        timestamp=timestamp,
+    )
+    db.session.add(uesr_msg)
+
+    bot_response = "Hello, this is a dummy response."
+    bot_msg = TextMessage(
+        chat_id=chat.id,
+        text=bot_response,
+        sender="bot",
+        timestamp=timestamp + timedelta(seconds=1),
+    )
+    db.session.add(bot_msg)
+    db.session.commit()
+
+    return jsonify({"bot_response": bot_response, "chat_id": chat.id})
+
+
+@app.route("/chat_history/<int:chat_id>", methods=["GET"])
+def chat_history(chat_id):
+    chat = Chat.query.filter_by(id=chat_id, user_id=current_user.id).first_or_404()
+    messages = []
+    for msg in chat.text_messages:
+        messages.append(msg.dict)
+    for img in chat.image_messages:
+        messages.append(img.dict)
+
+    messages = sorted(messages, key=lambda x: x["timestamp"])
+    return jsonify(messages)
 
 
 def allowed_file(filename):
@@ -42,4 +85,4 @@ def upload_picture():
         # db.session.commit()
         return {"message": "File uploaded successfully"}
 
-    return {"error": "Invalid file"}, HTTPStatus.BAD_REQUEST
+    return {"message": "Invalid file"}, HTTPStatus.BAD_REQUEST
