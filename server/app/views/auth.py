@@ -28,7 +28,7 @@ def account():
 def update_account():
     data = request.get_json()
     if err := UpdateAccountSchema().validate(data):
-        return err
+        return err, HTTPStatus.BAD_REQUEST
 
     current_user.username = data["username"]
     current_user.email = data["email"]
@@ -43,7 +43,7 @@ def register():
 
     data = request.get_json()
     if err := RegisterSchema().validate(data):
-        return err
+        return err, HTTPStatus.BAD_REQUEST
 
     hashed_pwd = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
     user = User(
@@ -64,7 +64,7 @@ def login():
 
     data = request.get_json()
     if err := LoginSchema().validate(data):
-        return err
+        return err, HTTPStatus.BAD_REQUEST
 
     user = User.query.filter_by(email=data["email"]).first()
     if user and bcrypt.check_password_hash(user.password, data["password"]):
