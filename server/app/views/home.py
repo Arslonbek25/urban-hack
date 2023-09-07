@@ -9,11 +9,13 @@ from flask_login import current_user
 from app import app
 from app.extensions import db
 from app.models import Chat, ImageMessage, TextMessage
+from app.predictor import predict
 
 
 @app.get("/")
 def home():
     return "hello world"
+
 
 @app.get("/chats")
 def chats():
@@ -73,7 +75,7 @@ def save_picture(file):
     filename = random_hex + os.path.splitext(file.filename)[1]
     path = os.path.join(app.root_path, "static", "x-rays", filename)
     file.save(path)
-    return filename
+    return path
 
 
 @app.post("/chat/<int:id>/image")
@@ -81,7 +83,8 @@ def upload_picture(id):
     file = request.files.get("image")
     if file and allowed_file(file.filename):
         filename = save_picture(file)
-
+        prediction = predict(filename)
+        print("PREDICTION", prediction)
         timestamp = datetime.utcnow()
         chat = Chat.query.get(id)
         if not chat:
@@ -90,10 +93,15 @@ def upload_picture(id):
             db.session.commit()
 
         new_image = ImageMessage(
-            chat_id=chat.id, image_path=filename, sender="user", timestamp=timestamp
+            chat_id=chat.id,
+            image_path=filename,
+            sender="user",
+            timestamp=timestamp,
+            prediction=prediction,
         )
         db.session.add(new_image)
 
+        # ChatGPT response
         bot_response = "Hello, this is a dummy response."
         # Connect to ML prediction pipeline
         bot_msg = TextMessage(
@@ -105,14 +113,8 @@ def upload_picture(id):
         db.session.add(bot_msg)
         db.session.commit()
 
-        return jsonify({"bot_response": bot_response, "chat_id": chat.id})
-
-        # old = os.path.join(app.root_path, "static", current_user.image_file)
-        # if os.path.exists(old):
-        #     os.remove(old)
-
-        # current_user.image_file = filename
-        # db.session.commit()
-        # return {"message": "File uploaded successfully"}
+        return jsonify(
+            {"bot_response": bot_response, "chat_id": chat.id, "prediction": prediction}
+        )
 
     return {"message": "Invalid file"}, HTTPStatus.BAD_REQUEST

@@ -70,6 +70,7 @@ class ImageMessage(db.Model):
     image_path = db.Column(db.String(200), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     sender = db.Column(db.String(20), nullable=False)
+    prediction = db.Column(db.String(20))
 
     @property
     def dict(self):
@@ -80,6 +81,7 @@ class ImageMessage(db.Model):
             ),
             "timestamp": self.timestamp,
             "sender": self.sender,
+            "prediction": self.prediction,
         }
 
 
