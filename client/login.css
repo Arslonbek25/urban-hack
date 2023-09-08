@@ -1,0 +1,105 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  list-style: none;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+.welcomeScreen {
+  margin-top: 100px;
+}
+
+h1 {
+  font-weight: 700;
+  font-size: 31px;
+  line-height: 27px;
+  color: rgba(46, 51, 57, 1);
+  margin-bottom: 30px;
+}
+
+form {
+  width: 100%;
+}
+
+form input {
+  width: 100%;
+  border: 1px solid rgba(15, 164, 127, 1);
+  padding: 15px 25px;
+  border-radius: 4px;
+}
+
+form button {
+  width: 100%;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 27px;
+  color: rgba(255, 255, 255, 1);
+  background-color: rgba(15, 164, 127, 1);
+  border: none;
+  padding: 15px 0px;
+  margin-top: 20px;
+  margin-bottom: 50px;
+  border-radius: 4px;
+}
+
+p {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 27px;
+  color: rgba(46, 51, 57, 1);
+}
+
+p a {
+  color: rgba(15, 164, 127, 1);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 27px;
+  text-decoration: none;
+}
+
+.options {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.options button {
+  width: 100%;
+  border: 1px solid rgba(195, 200, 207, 1);
+  background: transparent;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 15px 25px;
+}
+
+.options button svg {
+    margin-right: 10px;
+}
+
+.options button:first-child {
+  margin-bottom: 15px;
+}
+
+.or span {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 27px;
+  color: rgba(46, 51, 57, 1);
+  text-transform: uppercase;
+}
+
+.or span::after,
+.or span::before {
+  content: "";
+  width: 140px;
+  height: 1px;
+  background: rgba(46, 51, 57, 1);
+}

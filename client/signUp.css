@@ -1,0 +1,71 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+  }
+  
+  body {
+    font-family: "Inter", sans-serif;
+  }
+  
+  .welcomeScreen {
+    margin-top: 100px;
+  }
+  
+  h1 {
+    font-weight: 700;
+    font-size: 31px;
+    line-height: 27px;
+    color: rgba(46, 51, 57, 1);
+    margin-bottom: 30px;
+  }
+  
+  form {
+    width: 100%;
+  }
+  
+  form input {
+    width: 100%;
+    border: 1px solid rgba(15, 164, 127, 1);
+    padding: 15px 25px;
+    border-radius: 4px;
+    margin-top: 15px;
+  }
+  
+  form button {
+    width: 100%;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 27px;
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(15, 164, 127, 1);
+    border: none;
+    padding: 15px 0px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    border-radius: 4px;
+  }
+
+  form .inp1 {
+    width: 100%;
+    position: relative;
+  }
+
+  form .inp2 {
+    width: 100%;
+    position: relative;
+  }
+
+  form i {
+    position: absolute;
+    top: 35px;
+    right: 15px;
+    cursor: pointer;
+  }
+
+  .fa-eye-slash {
+    display: none;
+  }
+  

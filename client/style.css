@@ -1,0 +1,30 @@
+body {
+  font-family: "Inter", sans-serif;
+  background-color: rgba(52, 53, 65, 1);
+}
+
+.box {
+  margin-top: 250px;
+}
+
+.box p.white {
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 27px;
+  color: rgba(255, 255, 255, 1);
+}
+
+.box .btns .login,
+.box .btns .signUp {
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 27px;
+  color: rgba(255, 255, 255, 1);
+  border: none;
+  /* color: rgba(255, 255, 255, 1); */
+  background-color: rgba(15, 164, 127, 1);
+  border-radius: 4px;
+  padding: 10px 15px;
+}
+
+
