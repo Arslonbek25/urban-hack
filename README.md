@@ -1,6 +1,6 @@
 # Urban Tech Hackathon - Chest X-ray Analysis
 
-![Logo](https://github.com/Arslonbek25/urban-hack/assets/100064552/97a97b6f-86bb-46f4-b263-8bd2848fc7b7)
+![photo_2023-09-08_17-57-06](https://github.com/Arslonbek25/urban-hack/assets/100064552/43120bcb-fc91-4f36-9996-b871925166a9)
 
 ## Table of Contents
 
